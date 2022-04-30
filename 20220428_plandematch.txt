@@ -1,0 +1,22 @@
+1-Utilisateur rentre ses données = salix a commencé
+Parametre obligatoire VS pas obligatoire
+2-Validation= envoi au serveur 	
+	retour= valide ou pas (PopUP) aller chercher message d'erreur du code app.py a alix
+
+Bouton = validation
+
+Etape SUIVANTE
+
+Bouton execution du programme=
+Tu peux pas cliquer exception sans avoir cliquer validation
+Pendant que ca execute:
+
+	-kill(bouton) popup?
+	-statut d'Execution (affaire qui tourne)
+
+Reinitialisation= bouton
+
+Obtenir (href, route, A VERIFIER) et afficher la liste des fichiers (mymy)
+
+Cliquer sur un des fichier pour afficher son contenu(mymy)
+
