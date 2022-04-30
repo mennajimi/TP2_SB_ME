@@ -10,7 +10,8 @@ import urllib.request, json
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import bd, datetime, os
 #from flask_session import Session
-from validation import Validation
+#from validation import Validation
+from validation_Field import Validation
 from RunProg import RunProg
 import re
 
@@ -27,7 +28,8 @@ app.config['tmp'] = './tmp'
 bd.init_db()  #pas d'utilisation de la bd pour l'instant
 
 
-params_list=[]
+model_options = ["HKY","F84","GTR","JTT","WAG","PAM","BLOSUM","MTREV","CPREV45","MTART","LG","GENERAL"]
+params_list = []
 
 @app.route('/')
 def default():
@@ -74,17 +76,22 @@ def importerFichierArbre ():
 
 @app.route ('/paramsField', methods=['POST']) #en dévelop.
 def importerParamsDuChamp ():
-    params = request.form["param_string"]
-    print(params[0])
-    test = re.split('-', params)
-    print(params)
-    print(test)
-    bd.clean()
-    for item in test:
-        bd.add(str(item))
-    print(test)
-    print(type(params))
-    return default()
+    params_list = []
+    model = "-m"+str(model_options[int(request.form["model"])])
+    length = "-l"+str(request.form["length"])
+    i_range = "-i"+str(request.form["i_range"])
+    options = [model,length,i_range]
+    for i in options:
+        params_list.append(i)
+    print(params_list)
+    V1 = Validation(params_list)
+    valide = V1.valide
+    print(valide)
+    if valide == False:
+        print("Params non valide")
+        return render_template('seqgen_home.html', erreur="Paramètres non valide, revoyez l'utilisation")
+    else:
+        return default()
 
 @app.route ('/validerParams',methods=['POST'])
 def validerParametres():

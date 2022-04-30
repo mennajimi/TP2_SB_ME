@@ -5,10 +5,11 @@
 <BODY>
 <h4>Sélectionnez vos paramètres</h4>
 <div class="container-fluid">
+    <form action="/paramsField" method="post">
   <div class="row">
     <div class="col-sm">
      Model:
-        <select class="form-select" aria-label="Default select example">
+        <select class="form-select" id="model" name ="model">
         <option selected>Choose...</option>
             <optgroup label="Nucléotide" ></optgroup>
                 <option value="1">HKY</option>
@@ -30,7 +31,7 @@
     </div>
     <div class="col-sm">
         <div class="input-group">
-        <span class="input-group-addon"> -l:</span>  <input class="form-control-sm" type="text" name="length" placeholder="integer >0">
+        <span class="input-group-addon"> -l:</span>  <input class="form-control-sm" type="text" name="length" id="length" placeholder="integer >0">
         </div>
     </div>
     <div class="col-sm">
@@ -73,7 +74,7 @@
          </div>
         <div class="col">
         <div class="container-fluid">
-            <form class="row">
+            <div class="row">
                 <div class="col-md-12">
                     <div class="form-group row">
                         <div class="col-sm-4">
@@ -87,10 +88,10 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
-
-
+            <button class="btn btn-success" type="submit" value="submit" name="validate" id ="validate">Validate parameters</button>
+    </form>
     </div>
 
     </div>
@@ -107,18 +108,10 @@
     <input type=submit id="loadTree" value="Charger Arbre">
 </form>
 
-<br><br>
-
-  <form method=post action="/params-load" enctype=multipart/form-data>
-      <span class="input-group-addon"> ou Entrez un fichier de paramètres</span>  <input type=file id="fileSelect" name=file required="True">
-      <input type=submit id="loadParams" value="Charger paramètres" size="60p">
-  </form>
 
 <br><br><br><br>
 
-<form action="/validerParams" method="post">
-    <button class="btn btn-success" type="submit" value="submit" name="validate" id ="validate">Validate parameters</button>
-</form>
+
 
 <form action="/runprog" method="post">
     <button type="submit" class="btn btn-primary my-1"name="run" id ="run">Execute Seq-gen</button>
