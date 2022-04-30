@@ -91,7 +91,11 @@ def validerParametres():
     V1 = Validation(params_list, './tmp')
     valide = V1.valide
     print(valide)
-    return default()
+    if valide == False:
+        print("Params non valide")
+        return render_template('seqgen_home.html', erreur="Paramètres non valide, revoyez l'utilisation")
+    else:
+        return default()
 
 @app.route ('/runprog',methods=['POST'])
 def runprog():

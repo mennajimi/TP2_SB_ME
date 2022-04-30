@@ -92,3 +92,8 @@ input[type=text] {
   height:30px;
 }
 
+#validate , #run {
+display:inline-block;
+/* additional code */
+}
+

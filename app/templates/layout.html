@@ -45,8 +45,16 @@
     </header>
  </div>
 	<BODY>
-
-{% block content %} Testing{% endblock %}
+        <div class="container"  style="margin-top:40px">
+            <div class="row justify-content-md-center">
+                {% if erreur %}
+                <div class="col-md-5">
+                    <div class="alert alert-danger" role="alert">{{erreur}}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+{% block content %} {% endblock %}
 
 
 
