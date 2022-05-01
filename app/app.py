@@ -67,8 +67,9 @@ def importerParamsFichier ():
             print("params",params_list)
     return default()
 
-@app.route ('/tree-load', methods=['POST'])
-def importerFichierArbre ():
+@app.route ('/submitTree', methods=['POST']) #TO DO
+def submitTree ():
+    print("Bing")
     file = request.files["file"]
     file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire tmp
     filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
