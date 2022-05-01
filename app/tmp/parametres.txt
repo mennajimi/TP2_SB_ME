@@ -1,6 +1,0 @@
--mHKY
--l100
--or
--f0.2 0.2 0.2 0.2
-example.tree
-output3
