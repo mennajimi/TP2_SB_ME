@@ -69,14 +69,27 @@ def importerParamsFichier ():
 
 @app.route ('/submitTree', methods=['POST']) #TO DO
 def submitTree ():
-    print("Bing")
-    file = request.files["file"]
-    file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire tmp
-    filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
-    return default()
+    if request.form["optionTree"] == "pasted":
+        infile =request.form["treeEntry"]
+    elif request.form["optionTree"] =="file":
+        infile = []
+        file = request.files["userfile"]
+        file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire tmp
+        filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
+        file_in = open(filename, "r")
+        for ligne in file_in:
+            if not ligne.strip():
+                continue
+            else:
+                infile.append(ligne.strip("\n"))
+        infile = str(infile)
+        file_in.close()
+    print(infile)
+    return render_template('seqgen_home.html', tree=infile)
+
 
 @app.route ('/paramsField', methods=['POST']) #en dévelop.
-def importerParamsDuChamp ():
+def paramsField():
     params_list = []
     model = "-m"+str(model_options[int(request.form["model"])])
     length = "-l"+str(request.form["length"])
@@ -93,6 +106,7 @@ def importerParamsDuChamp ():
         return render_template('seqgen_home.html', erreur="Paramètres non valide, revoyez l'utilisation")
     else:
         return default()
+
 
 @app.route ('/validerParams',methods=['POST'])
 def validerParametres():

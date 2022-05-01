@@ -4,52 +4,6 @@
 
 <BODY>
 <h4>Sélectionnez vos paramètres</h4>
-
-<TABLE cellpadding = "30" cellspacing = "30">
-<form name='params' action='/paramsField' method='POST' >
-    <tr>
-        <td>
-            Model:
-        <select class="form-select" id="model" name ="model">
-        <option selected>Choose...</option>
-            <optgroup label="Nucléotide" ></optgroup>
-                <option value="1">HKY</option>
-                <option value="2">F84</option>
-                <option value="3">GTR</option>
-            </optgroup>
-            <optgroup label="Acides aminés"></optgroup>
-                <option value="4">JTT</option>
-                <option value="5">WAG</option>
-                <option value="6">PAM</option>
-                <option value="7">BLOSUM</option>
-                <option value="8">MTREV</option>
-                <option value="9">CPREV45</option>
-                <option value="10">MTART</option>
-                <option value="11">LG</option>
-                <option value="12">GENERAL</option>
-            </optgroup>
-        </select>
-        </td>
-        <td>
-            <div class="input-group">
-        <span class="input-group-addon"> -l:</span>  <input class="form-control-sm" type="text" name="length" id="length" placeholder="integer >0">
-        </div>
-        </td>
-        <td>
-            <label for="i_range" class="form-label">-i</label>
-        <input type="range" class="form-range sm" value = "0.00" min="0.0" max="1.0" step="0.01" id="i_range" name="i_range" size="5" oninput="this.nextElementSibling.value = this.value">
-        <output>0.00</output>
-        </td>
-    </tr>
-    <button class="btn btn-info" type="submit" value="submit" name="validate" id ="validate">Validate parameters</button>
-
-</form>
-</TABLE>
-
-
-
-
-<!--
 <div class="container-fluid">
     <form action="/paramsField" method="post">
   <div class="row">
@@ -95,7 +49,7 @@
         <span class="input-group-addon"> -p:</span>  <input class="form-control-sm" type="text" name="partitions" id="partitions" placeholder="integer" value ="1">
         </div>
       </div>
-  </div> <br>
+  </div><!--  --><br>
     <div class="row">
         <div class="col-sm">
             <form>
@@ -143,26 +97,26 @@
     </div>
 
 
-  </div> -->
+  </div> <!--  close container-->
 
         <br>
 
 <h4>Choisissez vos arbres <a href='https://evolution.genetics.washington.edu/phylip/newicktree.html' target='_blank'>(Phylip/Newick)</a></h4>
 
-<form enctype='multipart/form-data' name='dataEntry' action="/submitTree" method="post">
-    <td><p align='left'><textarea rows='6' name='treeEntry' style='width:60%; font-family:Courier new' ></textarea></p>
+<form enctype='multipart/form-data' name='dataEntry' method='POST' action='/submitTree>'>
+    <td><p align='left'><textarea rows='6' name='dataInput' style='width:60%; font-family:Courier new' ></textarea></p>
     </td>
     <tr>
         <td align='left'>
             <table class='blue' width='60%' border=0>
                 <tr>
                     <td align='center'> File
-                        <input type='radio' name='optionTree' value='file' onClick='inputTypeChanged(0)'>
-                        <input type='radio' name='optionTree' value='pasted' onClick='inputTypeChanged(1)' checked>Pasted
+                        <input type='radio' name='DataOptionTrex' value='file' onClick='inputTypeChanged(0)'>
+                        <input type='radio' name='DataOptionTrex' value='pasted' onClick='inputTypeChanged(1)' checked>Pasted
                         <input name='userfile' type='file' size=20 disabled>
                     </td>
                     <td>
-                        <button type="submit" class="btn btn-secondary"name="tree" id ="tree">Submit Tree </button>
+                        <button type="submit" class="btn btn-secondary"name="tree" id ="tree">Submit Tree</button>
                     </td>
                 </tr>
             </table>
