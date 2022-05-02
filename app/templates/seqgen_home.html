@@ -4,6 +4,88 @@
 
 <BODY>
 <h4>Sélectionnez vos paramètres</h4>
+
+<form name='params' action='/paramsField' method='POST' >
+    <TABLE cellpadding = "30" cellspacing = "30">
+        <tbody>
+            <tr><th colspan="2"><Font size=+1> Paramètres essentiel! Le programme ne fonctionnera pas sans ces paramètres</Font> </th></tr>
+            <tr>
+                <td>
+                <div class="form-group">
+                Model:
+                <select class="form-select" id="model" name ="model">
+                    <option selected></option>
+                        <optgroup label="Nucléotide" >
+                            <option value="HKY">HKY</option>
+                            <option value="F84">F84</option>
+                            <option value="GTR">GTR</option>
+                        </optgroup>
+                        <optgroup label="Acides aminés">
+                            <option value="JTT">JTT</option>
+                            <option value="WAG">WAG</option>
+                            <option value="PAM">PAM</option>
+                            <option value="BLOSUM">BLOSUM</option>
+                            <option value="MTREV">MTREV</option>
+                            <option value="CPREV45">CPREV45</option>
+                            <option value="MTART">MTART</option>
+                            <option value="LG">LG</option>
+                            <option value="GENERAL">GENERAL</option>
+                         </optgroup>
+                </select>
+            </div>
+        </td>
+        <td>
+            <div class="form-group">
+                <span class="input-group-addon"> -l:</span>  <input class="form-control-sm" type=”text” name="length" id="length" placeholder="integer >0">
+            </div>
+        </td>
+        <td>
+            <div class="form-group">
+                <label for="i_range" class="form-label">-i:</label>
+                <input type="range" class="form-range sm" value = "0.00" min="0.0" max="0.99" step="0.01" id="i_range" name="i_range" size="5" oninput="this.nextElementSibling.value = this.value">
+                <output>0.00</output>
+            </div>
+        </td>
+    </tr>
+    <tr><th colspan="2">Paramètres facultatifs</th></tr>
+    <tr>
+         <td>
+             <div class="form-group">
+                 <span class="input-group-addon"> -n:</span>  <input class="form-control-sm" type="text" name="n_simulation" id="n_simulation" placeholder="integer" value ="1">
+             </div>
+         </td>
+    </tr>
+    <tr>
+        <td>
+            <button class="btn btn-info" type="submit" value="submit" name="validate" id ="validate">Validate parameters</button>
+        </td>
+    </tr>
+</tbody>
+</TABLE>
+    <td><p align='left'><textarea rows='6' name='treeEntry' style='width:60%; font-family:Courier new' ></textarea></p>
+    </td>
+    <tr>
+        <td align='left'>
+            <table class='blue' width='60%' border=0>
+                <tr>
+                    <td align='center'> File
+                        <input type='radio' name='optionTree' value='file' onClick='inputTypeChanged(0)'>
+                        <input type='radio' name='optionTree' value='pasted' onClick='inputTypeChanged(1)' checked>Pasted
+                        <input name='userfile' type='file' size=20 disabled>
+                   </td>
+                    <td>
+                        <button type="submit" class="btn btn-secondary"name="tree" id ="tree">Submit Tree </button>-->
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</form>
+
+
+
+
+<!--
 <div class="container-fluid">
     <form action="/paramsField" method="post">
   <div class="row">
@@ -49,7 +131,7 @@
         <span class="input-group-addon"> -p:</span>  <input class="form-control-sm" type="text" name="partitions" id="partitions" placeholder="integer" value ="1">
         </div>
       </div>
-  </div><!--  --><br>
+  </div> <br>
     <div class="row">
         <div class="col-sm">
             <form>
@@ -97,26 +179,64 @@
     </div>
 
 
-  </div> <!--  close container-->
+  </div> -->
 
         <br>
 
-<h4>Choisissez vos arbres (PHYLIP)</h4>
+<h4>Choisissez vos arbres <a href='https://evolution.genetics.washington.edu/phylip/newicktree.html' target='_blank'>(Phylip/Newick)</a></h4>
 
-<form method=post action="/tree-load" enctype=multipart/form-data>
-    <input type=file name=file required="True">
-    <input type=submit id="loadTree" value="Charger Arbre">
-</form>
+<!--<form enctype='multipart/form-data' name='dataEntry' action="/submitTree" method="post">-->
+<!--    <td><p align='left'><textarea rows='6' name='treeEntry' style='width:60%; font-family:Courier new' ></textarea></p>-->
+<!--    </td>-->
+<!--    <tr>-->
+<!--        <td align='left'>-->
+<!--            <table class='blue' width='60%' border=0>-->
+<!--                <tr>-->
+<!--                    <td align='center'> File-->
+<!--                        <input type='radio' name='optionTree' value='file' onClick='inputTypeChanged(0)'>-->
+<!--                        <input type='radio' name='optionTree' value='pasted' onClick='inputTypeChanged(1)' checked>Pasted-->
+<!--                        <input name='userfile' type='file' size=20 disabled>-->
+<!--                    </td>-->
+<!--                    <td>-->
+<!--                        <button type="submit" class="btn btn-secondary"name="tree" id ="tree">Submit Tree </button>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--            </table>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--</form>-->
 
+<br><br>
 
-<br><br><br><br>
-
-
-
+{% if isValid %}
 <form action="/runprog" method="post">
     <button type="submit" class="btn btn-primary my-1"name="run" id ="run">Execute Seq-gen</button>
 </form>
+{% else %}
+<h1> CLIQUE SUR VALIDATE PARAM PAS SRU SUBMIT TREE ENTRE DONC DES PARAMETRES VALIDES !</h1>
+{% endif %}
+
 
 </BODY>
+
+
+<br><br>
+-------------
+<script>
+		function inputTypeChanged(val){
+			var o = document.params
+   	 		if(val == 0){
+    			o.userfile.disabled=false;
+    			o.treeEntry.disabled=true;
+    		}
+    		else{
+    			o.userfile.disabled=true;
+     			o.treeEntry.disabled=false;
+    		}
+		}
+
+</script>
+
 {% endblock %}
+
 
