@@ -13,28 +13,33 @@
 
 import re
 import os
+import shutil
 import subprocess
 from datetime import datetime
 
 
 class RunProg:
 
-    def __init__(self, paramsFile, infile, outfile, valide, directory):
+    def __init__(self, paramsFile, infile, outfile, directory):
         print("prog inti")
         self.__directory = directory
         self.__params = paramsFile   #__params: de __input, les éléments qui sont des paramètres seqgen
         self.__infile, self.__outfile = infile, outfile
-        self.__valide = valide  #__valide: Boolean qui indique si les paramètres entrés sont valides pour Seqgen
+        self.__valide = True # valide _valide: Boolean qui indique si les paramètres entrés sont valides pour Seqgen
         self.__process = ""  #__process: permet de lancer le processus d'exécution de programme
         self.__logfile = ""  #__logfile: sauvegarde le log de Seqgen pour consultation au besoin
 
     def run(self):         # initie l'exécution, à l'aide de la fonction run_popen ci-bas
+        cmd = shutil.which("./seq-gen")
         if (self.__valide == True and '-h' in self.__params):
             cmd = "./seq-gen -h"
         elif self.__valide != 0:
-            param_string = " ".join(self.__params)
-            cmd = "./seq-gen " + param_string + " < " + str(self.__infile) + " > " + str(self.__directory) + "/" + str(
-                self.__outfile)
+
+            # on crée la commande
+            for cle, valeur in self.__params.items():
+                cmd += " -" + cle + valeur + " "
+            cmd += " < " + self.__infile + " > " + self.__outfile
+
         RunProg.run_popen(self, cmd)
         print("Process SeqGen initié")
 
@@ -56,6 +61,7 @@ class RunProg:
             print("\nStatut d'exécution: en cours 1")
         else:
             print("\nStatut d'exécution: terminé avec échec 3, voir: " + str(self.__logfile))
+        #IL FAUT RETOURNER STATUS
 
     def reset(self):   #permet d'effacer les documents et d'annuler la requête (kill)
         print("\nVotre requête est annulée")
