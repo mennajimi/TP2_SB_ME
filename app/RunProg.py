@@ -21,13 +21,13 @@ from datetime import datetime
 class RunProg:
 
     def __init__(self, paramsFile, infile, outfile, directory):
-        print("prog inti")
         self.__directory = directory
         self.__params = paramsFile   #__params: de __input, les éléments qui sont des paramètres seqgen
         self.__infile, self.__outfile = infile, outfile
         self.__valide = True # valide _valide: Boolean qui indique si les paramètres entrés sont valides pour Seqgen
         self.__process = ""  #__process: permet de lancer le processus d'exécution de programme
         self.__logfile = ""  #__logfile: sauvegarde le log de Seqgen pour consultation au besoin
+        self.__execution = "bob"
 
     def run(self):         # initie l'exécution, à l'aide de la fonction run_popen ci-bas
         cmd = shutil.which("./seq-gen")
@@ -39,9 +39,8 @@ class RunProg:
             for cle, valeur in self.__params.items():
                 cmd += " -" + cle + valeur + " "
             cmd += " < " + self.__infile + " > " + self.__outfile
-
         RunProg.run_popen(self, cmd)
-        print("Process SeqGen initié")
+        print("Process SeqGen initié", cmd)
 
     def run_popen(self, cmd):     # créer une instance de popen (self.__process) pour gérer l'exécution
         self.__logfile = str(self.__directory) + "/" + str(RunProg.__now) + "_log.txt"
@@ -52,27 +51,46 @@ class RunProg:
             self.__process = "help"
             subprocess.run(cmd, shell=True, stdout=None)
 
-    def status(self):   #utilisé pour vérifier le status d'exécution du process seqgen
+    @property
+    def execution(self):
         if self.__process == "":
-            print("\nStatut d'exécution: non commencé 0 ")
+            self.__execution = "Execution: not launched"
         elif self.__process == "help" or self.__process.poll() == 0:
-            print("\nStatut d'exécution: terminé avec succès 2")
+            self.__execution = "Execution: successfully completed"
         elif self.__process.poll() is None:
-            print("\nStatut d'exécution: en cours 1")
+            self.__execution = "Execution: running"
         else:
-            print("\nStatut d'exécution: terminé avec échec 3, voir: " + str(self.__logfile))
-        #IL FAUT RETOURNER STATUS
+            self.__execution = "Execution: failed, see log file"
+        return self.__execution
 
+    def __status(self):   #utilisé pour vérifier le status d'exécution du process seqgen
+        if self.__process == "":
+            self.__execution = "Execution: not launched"
+        elif self.__process == "help" or self.__process.poll() == 0:
+            self.__execution = "Execution: successfully completed"
+        elif self.__process.poll() is None:
+            self.__execution = "Execution: running"
+        else:
+            self.__execution = "Execution: failed, see log file"
+        return self.__execution
+
+    @property
     def reset(self):   #permet d'effacer les documents et d'annuler la requête (kill)
-        print("\nVotre requête est annulée")
         if not self.__process == "":
             self.__process.kill()
-            if os.path.isfile(str(self.__directory) + "/" + str(self.__outfile)):
-                os.remove(str(self.__directory) + "/" + str(self.__outfile))
-            if os.path.isfile(str(self.__logfile)):
-                os.remove(str(self.__logfile))
+            folder = './tmp'
+            for filename in os.listdir(folder):
+                file_path = os.path.join(folder, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception as e:
+                    print('Failed to delete %s. Reason: %s' % (file_path, e))
+            return "Run cancelled"
         else:
-            print("\nVotre exécution n'est pas lancée")
+            return "Program not launched"
 
     def view(self):   #permet de voir les fichiers dans le dossier de travail seqgen
         my_files = []

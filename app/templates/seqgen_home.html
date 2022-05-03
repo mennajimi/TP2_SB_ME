@@ -5,63 +5,188 @@
 <BODY>
 <h4>Sélectionnez vos paramètres</h4>
 
-<form name='params' action='/paramsField' method='POST' >
-    <TABLE cellpadding = "30" cellspacing = "30">
+<div class="container-fluid">
+<form enctype='multipart/form-data' name='params' action='/paramsField' method='POST' >
+    <div>
+    <TABLE cellpadding = "30" cellspacing = "30" style="float: left">
         <tbody>
-            <tr><th colspan="2"><Font size=+1> Paramètres essentiel! Le programme ne fonctionnera pas sans ces paramètres</Font> </th></tr>
+            <tr><th ><Font size=+1> General options: </Font> </th></tr>
             <tr>
                 <td>
+                    <div class="form-group">
+                    Model:
+                    <select class="form-select" id="model" name ="model" style="width=50%" required="True">
+                        <option selected></option>
+                            <optgroup label="Nucléotide" >
+                                <option value="HKY">HKY</option>
+                                <option value="F84">F84</option>
+                                <option value="GTR">GTR</option>
+                            </optgroup>
+                            <optgroup label="Acides aminés">
+                                <option value="JTT">JTT</option>
+                                <option value="WAG">WAG</option>
+                                <option value="PAM">PAM</option>
+                                <option value="BLOSUM">BLOSUM</option>
+                                <option value="MTREV">MTREV</option>
+                                <option value="CPREV45">CPREV45</option>
+                                <option value="MTART">MTART</option>
+                                <option value="LG">LG</option>
+                                <option value="GENERAL">GENERAL</option>
+                            </optgroup>
+                    </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -l:</span>  <input class="form-control-sm" type=”text” name="length" id="length" placeholder="integer >0" width="50%">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -n:</span>  <input class="form-control-sm" type=”text” name="datasets" id="datasets" placeholder="integer >0" width="50%">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -p:</span>  <input class="form-control-sm" type=”text” name="partitions" id="partitions" placeholder="integer >0" width="50%">
+                    </div>
+                </td>
+            <tr>
+                <td>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Choose:</button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#" aria-selected="true">Default</a>
+                                    <a class="dropdown-item" href="#">-d</a>
+                                    <a class="dropdown-item" href="#">-s</a>
+                        </div>
+                                <input type="text" class="form-control" aria-label="Text input with dropdown button" placeholder="decimal #">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -k:</span>  <input class="form-control-sm" type=”text” name="k_ancestral" id="k_ancestral" placeholder="integer >0" width="50%">
+                    </div>
+                </td>
+            </tr>
+            <tr><th colspan="2"><Font size=+1>Substitution model options: </Font> </th></tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -a:</span>  <input class="form-control-sm" type=”text” name="shape" id="shape" placeholder="real >0" width="50%">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="g_range" class="form-label">-g:</label>
+                            <input type="range" class="form-range sm" value = "2" min="2" max="32" step="1" id="g_range" name="g_range" size="5" oninput="this.nextElementSibling.value = this.value">
+                            <output>2</output>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="i_range" class="form-label">-i:</label>
+                            <input type="range" class="form-range sm" value = "0.00" min="0.0" max="0.99" step="0.01" id="i_range" name="i_range" size="5" oninput="this.nextElementSibling.value = this.value">
+                            <output>0.00</output>
+                    </div>
+                </td>
+            </tr>
+            <tr><th colspan="2"><Font size=+1> Nucleotide model specific options: </Font> </th></tr>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -c:</span>  <input class="form-control-sm"  type=”text” name="codon_het1" id="codon_het1" placeholder="decimal" style="width: 80px;">
+                        <input class="form-control-sm" type=”text” name="codon_het2" id="codon_het2" placeholder="decimal" style="width: 80px;">
+                        <input class="form-control-sm" type=”text” name="codon_het3" id="codon_het3" placeholder="decimal" style="width: 80px;">
+                    </div>
+
+                </td>
+                                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -t:</span>  <input class="form-control-sm" type=”text” name="transition" id="transition" placeholder="decimal >0" width="50%">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -r:</span>  <input class="form-control-sm"  type=”text” name="nt_rate1" id="nt_rate1" placeholder="A-C" style="width: 45px;">
+                        <input class="form-control-sm" type=”text” name="nt_rate2" id="nt_rate2" placeholder="A-G" style="width: 45px;">
+                        <input class="form-control-sm" type=”text” name="nt_rate3" id="nt_rate3" placeholder="A-T" style="width: 45px;">
+                        <input class="form-control-sm" type=”text” name="nt_rate4" id="nt_rate4" placeholder="C-G" style="width: 45px;">
+                        <input class="form-control-sm" type=”text” name="nt_rate5" id="nt_rate5" placeholder="C-T" style="width: 45px;">
+                        <input class="form-control-sm" type=”text” name="nt_rate6" id="nt_rate6" placeholder="G-T" style="width: 45px;">
+
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -f:</span>  <input class="form-control-sm"  type=”text” name="nt_freq1" id="nt_freq1" placeholder="A" style="width: 60px;">
+                        <input class="form-control-sm" type=”text” name="nt_freq2" id="nt_freq2" placeholder="C" style="width: 60px;">
+                        <input class="form-control-sm" type=”text” name="nt_freq3" id="nt_freq3" placeholder="G" style="width: 60px;">
+                        <input class="form-control-sm" type=”text” name="nt_freq4" id="nt_freq4" placeholder="T" style="width: 60px;">
+                    </div>
+                </td>
+            </tr>
+            <tr><th colspan="2">Amino Acid model specific options (order ARNDCQEGHILKMFPSTWYV):</th></tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -r:</span>  <input class="form-control-sm" type=”text” name="raa" id="raa" placeholder="190 valeurs!!!">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -f:</span>  <input class="form-control-sm" type=”text” name="faa" id="faa" placeholder="20 valeurs...si fe equal">
+                    </div>
+                </td>
+            <tr><th colspan="2">Miscellaneous options:</th></tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <span class="input-group-addon"> -z:</span>  <input class="form-control-sm" type="text" name="seed" id="seed" placeholder="integer">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                    Output format (-o):
+                    <select class="form-select" id="output" name ="output">
+                            <option value="p" selected>op (PHY)</option>
+                            <option value="r">or (relaxed)</option>
+                            <option value="n">on (Nexus)</option>
+                            <option value="f">of (fasta)</option>
+                    </select>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">Write(-w):
+                        <select class="form-select" id="write" name ="write">
+                            <option value="w" selected>none</option>
+                            <option value="wa">wa</option>
+                            <option value="on">wr</option>
+                        </select>
+                        </div>
+                </td>
+            </tr>
+            <td>
                 <div class="form-group">
-                Model:
-                <select class="form-select" id="model" name ="model">
-                    <option selected></option>
-                        <optgroup label="Nucléotide" >
-                            <option value="HKY">HKY</option>
-                            <option value="F84">F84</option>
-                            <option value="GTR">GTR</option>
-                        </optgroup>
-                        <optgroup label="Acides aminés">
-                            <option value="JTT">JTT</option>
-                            <option value="WAG">WAG</option>
-                            <option value="PAM">PAM</option>
-                            <option value="BLOSUM">BLOSUM</option>
-                            <option value="MTREV">MTREV</option>
-                            <option value="CPREV45">CPREV45</option>
-                            <option value="MTART">MTART</option>
-                            <option value="LG">LG</option>
-                            <option value="GENERAL">GENERAL</option>
-                         </optgroup>
-                </select>
-            </div>
-        </td>
-        <td>
-            <div class="form-group">
-                <span class="input-group-addon"> -l:</span>  <input class="form-control-sm" type=”text” name="length" id="length" placeholder="integer >0">
-            </div>
-        </td>
-        <td>
-            <div class="form-group">
-                <label for="i_range" class="form-label">-i:</label>
-                <input type="range" class="form-range sm" value = "0.00" min="0.0" max="0.99" step="0.01" id="i_range" name="i_range" size="5" oninput="this.nextElementSibling.value = this.value">
-                <output>0.00</output>
-            </div>
-        </td>
-    </tr>
-    <tr><th colspan="2">Paramètres facultatifs</th></tr>
-    <tr>
-         <td>
-             <div class="form-group">
-                 <span class="input-group-addon"> -n:</span>  <input class="form-control-sm" type="text" name="n_simulation" id="n_simulation" placeholder="integer" value ="1">
-             </div>
-         </td>
-    </tr>
-    <tr>
-        <td>
-            <button class="btn btn-info" type="submit" value="submit" name="validate" id ="validate">Validate parameters</button>
-        </td>
-    </tr>
+                    <span class="input-group-addon"> -x:</span>  <input class="form-control-sm" type=”text” name="addon" id="addon" placeholder="x is a name file to add!!!">
+                </div>
+            </td>
+            <tr><th colspan="2">Output file name:</th><tr>
+                <td>
+                    <div class="form-group">
+                        <input class="form-control-sm" type="text" name="outputFile" id="outputFile" placeholder="enter file name">
+                    </div>
+                </td>
+            <tr>
+                <td>
+                    <button class="btn btn-info" type="submit" value="submit" name="validate" id ="validate">Validate parameters</button>
+                </td>
+            </tr>
 </tbody>
 </TABLE>
+    </div>
+</form>
+    <form enctype='multipart/form-data' name='dataEntry' action="/submitTree" method="post">
     <td><p align='left'><textarea rows='6' name='treeEntry' style='width:60%; font-family:Courier new' ></textarea></p>
     </td>
     <tr>
@@ -72,139 +197,15 @@
                         <input type='radio' name='optionTree' value='file' onClick='inputTypeChanged(0)'>
                         <input type='radio' name='optionTree' value='pasted' onClick='inputTypeChanged(1)' checked>Pasted
                         <input name='userfile' type='file' size=20 disabled>
-                   </td>
+                    </td>
                     <td>
-                        <button type="submit" class="btn btn-secondary"name="tree" id ="tree">Submit Tree </button>-->
+                        <button type="submit" class="btn btn-secondary"name="tree" id ="tree">Submit Tree </button>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
 </form>
-
-
-
-
-<!--
-<div class="container-fluid">
-    <form action="/paramsField" method="post">
-  <div class="row">
-    <div class="col-sm">
-     Model:
-        <select class="form-select" id="model" name ="model">
-        <option selected>Choose...</option>
-            <optgroup label="Nucléotide" ></optgroup>
-                <option value="1">HKY</option>
-                <option value="2">F84</option>
-                <option value="3">GTR</option>
-            </optgroup>
-            <optgroup label="Acides aminés"></optgroup>
-                <option value="4">JTT</option>
-                <option value="5">WAG</option>
-                <option value="6">PAM</option>
-                <option value="7">BLOSUM</option>
-                <option value="8">MTREV</option>
-                <option value="9">CPREV45</option>
-                <option value="10">MTART</option>
-                <option value="11">LG</option>
-                <option value="12">GENERAL</option>
-            </optgroup>
-        </select>
-    </div>
-    <div class="col-sm">
-        <div class="input-group">
-        <span class="input-group-addon"> -l:</span>  <input class="form-control-sm" type="text" name="length" id="length" placeholder="integer >0">
-        </div>
-    </div>
-    <div class="col-sm">
-      <label for="i_range" class="form-label">-i</label>
-        <input type="range" class="form-range sm" value = "0.00" min="0.0" max="1.0" step="0.01" id="i_range" name="i_range" size="5" oninput="this.nextElementSibling.value = this.value">
-        <output>0.00</output>
-    </div>
-      <div class="col-sm">
-        <div class="input-group">
-        <span class="input-group-addon"> -n:</span>  <input class="form-control-sm" type="text" name="n_simulation" id="n_simulation" placeholder="integer" value ="1">
-        </div>
-      </div>
-      <div class="col-sm">
-        <div class="input-group">
-        <span class="input-group-addon"> -p:</span>  <input class="form-control-sm" type="text" name="partitions" id="partitions" placeholder="integer" value ="1">
-        </div>
-      </div>
-  </div> <br>
-    <div class="row">
-        <div class="col-sm">
-            <form>
-                <label class="radio-inline">
-                    <input type="radio" name="-ds" id="-d" >-d
-                </label>
-                <label class="radio-inline">
-                    <input type="radio" name="-ds" id="-s">-s
-                </label>
-                <label class="radio-inline">
-                    <input type="radio" name="-ds" id="-ds_default" checked>default
-                </label>
-                <div class="input-group">
-                    <input class="form-control-sm" type="text" name="ancestry" name="ancestry" placeholder="decimal #">
-                </div>
-            </form>
-        </div>
-        <div class="col-sm">
-            <div class="input-group">
-                <span class="input-group-addon"> -k:</span>  <input class="form-control-sm" type="text" name="ancestry" name="ancestry" placeholder="integer >0">
-            </div>
-         </div>
-        <div class="col">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group row">
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="inputKey">
-                        </div>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="inputValue">
-                        </div>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="inputValue">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-            <button class="btn btn-success" type="submit" value="submit" name="validate" id ="validate">Validate parameters</button>
-    </form>
-    </div>
-
-    </div>
-
-
-  </div> -->
-
-        <br>
-
-<h4>Choisissez vos arbres <a href='https://evolution.genetics.washington.edu/phylip/newicktree.html' target='_blank'>(Phylip/Newick)</a></h4>
-
-<!--<form enctype='multipart/form-data' name='dataEntry' action="/submitTree" method="post">-->
-<!--    <td><p align='left'><textarea rows='6' name='treeEntry' style='width:60%; font-family:Courier new' ></textarea></p>-->
-<!--    </td>-->
-<!--    <tr>-->
-<!--        <td align='left'>-->
-<!--            <table class='blue' width='60%' border=0>-->
-<!--                <tr>-->
-<!--                    <td align='center'> File-->
-<!--                        <input type='radio' name='optionTree' value='file' onClick='inputTypeChanged(0)'>-->
-<!--                        <input type='radio' name='optionTree' value='pasted' onClick='inputTypeChanged(1)' checked>Pasted-->
-<!--                        <input name='userfile' type='file' size=20 disabled>-->
-<!--                    </td>-->
-<!--                    <td>-->
-<!--                        <button type="submit" class="btn btn-secondary"name="tree" id ="tree">Submit Tree </button>-->
-<!--                    </td>-->
-<!--                </tr>-->
-<!--            </table>-->
-<!--        </td>-->
-<!--    </tr>-->
-<!--</form>-->
 
 <br><br>
 
@@ -213,8 +214,9 @@
     <button type="submit" class="btn btn-primary my-1"name="run" id ="run">Execute Seq-gen</button>
 </form>
 {% else %}
-<h1> CLIQUE SUR VALIDATE PARAM PAS SRU SUBMIT TREE ENTRE DONC DES PARAMETRES VALIDES !</h1>
 {% endif %}
+
+
 
 
 </BODY>
@@ -224,7 +226,7 @@
 -------------
 <script>
 		function inputTypeChanged(val){
-			var o = document.params
+			var o = document.dataEntry
    	 		if(val == 0){
     			o.userfile.disabled=false;
     			o.treeEntry.disabled=true;

@@ -2,12 +2,30 @@
 
 {% block content %}
 	<BODY>
+    <h4> Seq-gen was launched!</h4>
+                {% if status %}
+                <div class="col-md-5">
+                    <div class="alert alert-success" role="alert">{{status}}</div>
+                </div>
+                {% endif %}
     <br>
     <br>
-<h1>Opening a folder from HTML code</h1>
-    <a href="/tmp">Click to open a folder</a>
+    <form name='status' action='/getStatus' method='GET'>
+        <button type="submit" class="btn btn-primary my-1"name="state" id ="state">Get program status</button>
+    </form>
+    <br>
+    <br>
+        <form name='clear' action='/clearRun' method='POST'>
+        <button type="submit" class="btn btn-danger"name="kill" id ="kill">Clear Run</button>
+    </form>
+    <br>
+    <br>
+    <h4> Get results <a href="/results">here</a></h4>
+    <br>
+    <br>
 
 
+    </BODY>
 
 {% endblock %}
 
@@ -19,4 +37,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	</BODY>
 </HTML>
-

@@ -33,10 +33,10 @@ bd.init_db()  #pas d'utilisation de la bd pour l'instant
 model_options = ["HKY","F84","GTR","JTT","WAG","PAM","BLOSUM","MTREV","CPREV45","MTART","LG","GENERAL"]
 params_list = {}
 infile = ""
+R1 = ""
 
 @app.route('/')
 def default():
-    print(params_list)
     return render_template('seqgen_home.html', params=params_list)
 #a chaque fois que tu fais un render tempplate pour seqgen-home, on renvoit status
 
@@ -57,71 +57,95 @@ def returnParams ():
     items = bd.getParams()
     return jsonify(items)
 
-@app.route ('/params-load', methods=['POST'])
-def importerParamsFichier ():
-    file = request.files["file"]
-    file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire
-    filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
-    file_in = open(filename, "r")
-    for ligne in file_in:
-        if not ligne.strip():
-            continue
-        else:
-            params_list.append(ligne.strip("\n"))
-            print("params",params_list)
-    return default()
+# @app.route ('/params-load', methods=['POST'])
+# def importerParamsFichier ():
+#     file = request.files["file"]
+#     file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire
+#     filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
+#     file_in = open(filename, "r")
+#     for ligne in file_in:
+#         if not ligne.strip():
+#             continue
+#         else:
+#             params_list.append(ligne.strip("\n"))
+#             print("params",params_list)
+#     return default()
 
-# @app.route ('/submitTree', methods=['POST']) #TO DO
-# def submitTree ():
-    # global infile
-    # if request.form["optionTree"] == "pasted":
-    #     infile = request.form["treeEntry"]
-    # elif request.form["optionTree"] =="file":
-    #     infile = []
-    #     file = request.files["userfile"]
-    #     print(file.filename)
-    #     # file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire tmp
-    #     infile = app.config['tmp'] + "/" + file.filename  # faire un chemin
-    #     #file_in = open(filename, "r")
-    #     #for ligne in file_in:
-    #     #    if not ligne.strip():
-    #     #        continue
-    #     #    else:
-    #      #       infile.append(ligne.strip("\n"))
-    #     #infile = str(infile)
-    #     #file_in.close()
-    # print(infile)
-    # return render_template('seqgen_home.html', tree=infile)
+
+@app.route ('/submitTree', methods=['POST'])
+def submitTree ():
+    global infile
+    if request.form["optionTree"] == "pasted": #écrire un fichier à partir du champ
+        infile =request.form["treeEntry"]
+        file_in=open("tmp/entry.tree", "w")
+        infile ="tmp/entry.tree"
+        for lines in infile:
+            file_in.write(lines)
+        file_in.close()
+    elif request.form["optionTree"] == "file": #sauver le fichier dans tmp
+        infile = []
+        file = request.files["userfile"]
+        file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire tmp
+        filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
+        file_in = open(filename, "r")
+        print("file", file, "filename", filename)
+        for ligne in file_in:
+            if not ligne.strip():
+                continue
+            else:
+                infile.append(ligne.strip("\n"))
+        infile = filename
+        file_in.close()
+    print(infile)
+    return render_template('seqgen_home.html', sucess="fichier loadé")
 
 
 @app.route ('/paramsField', methods=['POST']) # Fini pour les paramètres de base :)
 def paramsField():
-    print("coucou")
-    # model = "-m"+str(model_options[int(request.form["model"])])
-    # length = "-l"+str(request.form["length"])
-    # i_range = "-i"+str(request.form["i_range"])
+    temp_list = {}
+    temp_list["m"] = str(request.form["model"])
+    temp_list["l"] = str(request.form["length"])
+    temp_list["n"] = str(request.form["datasets"])
+    #params_list["ds"] = str(request.form["i_range"]) ça marche pantoute ici
+    temp_list["k"] = str(request.form["k_ancestral"])
+    temp_list["a"] = str(request.form["shape"])
+    temp_list["g"] = str(request.form["g_range"])
+    temp_list["c1"] = str(request.form["codon_het2"])
+    temp_list["c2"] = str(request.form["codon_het2"])
+    temp_list["c3"] = str(request.form["codon_het2"])
+    temp_list["r1"] = str(request.form["nt_rate1"])
+    temp_list["r2"] = str(request.form["nt_rate2"])
+    temp_list["r3"] = str(request.form["nt_rate3"])
+    temp_list["r4"] = str(request.form["nt_rate4"])
+    temp_list["r5"] = str(request.form["nt_rate5"])
+    temp_list["f1"] = str(request.form["nt_rate6"])
+    temp_list["f2"] = str(request.form["nt_freq1"])
+    temp_list["f2"] = str(request.form["nt_freq2"])
+    temp_list["f3"] = str(request.form["nt_freq3"])
+    temp_list["f4"] = str(request.form["nt_freq4"])  ###ici les paramètres acides aminés devraient commencer
+    temp_list["f3"] = str(request.form["nt_freq3"])
+    temp_list["o"] = str(request.form["output"])
+    temp_list["outputFile"] = str(request.form["outputFile"])
 
     global params_list
-    params_list["m"] = str(request.form["model"])
-    params_list["l"] = str(request.form["length"])
-    params_list["i"] = str(request.form["i_range"])
-
-    print(params_list)
-
-    global infile
-    if request.form["optionTree"] == "pasted":
-        infile = request.form["treeEntry"]
-    elif request.form["optionTree"] == "file":
-        file = request.form["userfile"]
-        infile = app.config['tmp'] + "/" + file  # faire un chemin
-
-    print(infile)
-
+    for k, v in temp_list.items():
+        if v != "":
+            print(v)
+            print(k)
+            params_list[k] = v
+    # global infile
+    # if request.form["optionTree"] == "pasted":
+    #     infile = request.form["treeEntry"]
+    # else:
+    #     file = request.form["userfile"]
+    #     infile = app.config['tmp'] + "/" + file  # faire un chemin
+    #     print(infile)
     if params_list["l"].isdigit() == False or params_list["m"] == "" or infile == "":
         print("Params non valide")
-        return render_template('seqgen_home.html', erreur="Paramètres non valide, revoyez l'utilisation")
+        return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation")
     else:
-        return render_template("seqgen_home.html", isValid=True)
+        return render_template("seqgen_home.html", success="Les paramètres sont valides, procédez", isValid=True)
+
 
 # @app.route ('/validerParams',methods=['POST'])
 # def validerParametres():
@@ -136,14 +160,27 @@ def paramsField():
 
 @app.route ('/runprog',methods=['POST'])
 def runprog():
-    # V1 = Validation(params_list, './tmp')
-    # valide = V1.valide
-    # params = V1.params
-
-    outfile = datetime.now().strftime("%H%M%S") + '_output_seqgen'
+    outfile = './tmp/'+datetime.now().strftime("%H%M%S") + '_output_seqgen'
+    global R1
     R1 = RunProg(params_list, infile, outfile, './tmp')
     R1.run()
-    return default()
+    for f in os.listdir('./tmp'):
+        if os.path.isfile(str('./tmp' + f)):
+            print("the file:", f)
+            os.remove(f)
+    return render_template('running.html', status=R1.execution)
+
+@app.route ('/getStatus', methods=['GET'])
+def getStatus():
+    print("test")
+    global R1
+    return render_template('running.html', status=R1.execution)
+
+@app.route ('/clearRun', methods=['POST'])
+def clearRun():
+    message=R1.reset
+    print("test")
+    return render_template("seqgen_home.html", erreur=message)
 
 @app.route('/<path:path>')
 def all_files(path):
