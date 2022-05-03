@@ -4,9 +4,16 @@
 	<BODY>
     <br>
     <br>
-<h1>Opening a folder from HTML code</h1>
-    <a href="/tmp">Click to open a folder</a>
-
+<h1>Get your results:</h1>
+    <ul>
+    {% for file in files %}
+    <li>
+        <a href="{{ ('/') + file }}">
+            {{ ('/') + file }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
 
 
 {% endblock %}

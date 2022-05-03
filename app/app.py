@@ -7,7 +7,7 @@
 __auteur__ = "Alix Boc"
 
 import urllib.request, json
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, abort, send_file
 import bd, os
 from datetime import datetime
 #from flask_session import Session
@@ -34,15 +34,30 @@ model_options = ["HKY","F84","GTR","JTT","WAG","PAM","BLOSUM","MTREV","CPREV45",
 params_list = {}
 infile = ""
 R1 = ""
+upload=False
 
 @app.route('/')
 def default():
-    return render_template('seqgen_home.html', params=params_list)
+    return render_template('seqgen_home.html', upload=upload)
 #a chaque fois que tu fais un render tempplate pour seqgen-home, on renvoit status
 
-@app.route('/results')
-def results():
-    return render_template('results.html')
+@app.route('/results', defaults={'req_path': ''})
+@app.route('/<path:req_path>')
+def results(req_path):
+    BASE_DIR = './tmp'
+
+    # Joining the base and the requested path
+    abs_path = os.path.join(BASE_DIR, req_path)
+    # Return 404 if path doesn't exist
+    if not os.path.exists(abs_path):
+        return abort(404)
+     # Check if path is a file and serve
+    if os.path.isfile(abs_path):
+        return send_file(abs_path)
+     # Show directory contents
+    files = os.listdir(abs_path)
+    return render_template('results.html', files=files)
+
 
 @app.route('/help')
 def help():
@@ -75,11 +90,12 @@ def returnParams ():
 @app.route ('/submitTree', methods=['POST'])
 def submitTree ():
     global infile
+    global upload
     if request.form["optionTree"] == "pasted": #écrire un fichier à partir du champ
-        infile =request.form["treeEntry"]
-        file_in=open("tmp/entry.tree", "w")
+        tree =request.form["treeEntry"]
         infile ="tmp/entry.tree"
-        for lines in infile:
+        file_in=open("tmp/entry.tree", "w")
+        for lines in tree:
             file_in.write(lines)
         file_in.close()
     elif request.form["optionTree"] == "file": #sauver le fichier dans tmp
@@ -96,8 +112,9 @@ def submitTree ():
                 infile.append(ligne.strip("\n"))
         infile = filename
         file_in.close()
-    print(infile)
-    return render_template('seqgen_home.html', sucess="fichier loadé")
+    if len(infile) != 0:
+        upload=True
+    return render_template('seqgen_home.html', upload = upload)
 
 
 @app.route ('/paramsField', methods=['POST']) # Fini pour les paramètres de base :)
@@ -125,7 +142,7 @@ def paramsField():
     temp_list["f4"] = str(request.form["nt_freq4"])  ###ici les paramètres acides aminés devraient commencer
     temp_list["f3"] = str(request.form["nt_freq3"])
     temp_list["o"] = str(request.form["output"])
-    temp_list["outputFile"] = str(request.form["outputFile"])
+    #temp_list["outputFile"] = str(request.form["outputFile"])      ## on utilise pas ce champs pour l'instant
 
     global params_list
     for k, v in temp_list.items():
@@ -160,26 +177,26 @@ def paramsField():
 
 @app.route ('/runprog',methods=['POST'])
 def runprog():
-    outfile = './tmp/'+datetime.now().strftime("%H%M%S") + '_output_seqgen'
-    global R1
+    outfile = './tmp/'+datetime.now().strftime("%H%M%S") + '_output_seqgen.txt'
+    global R1, infile, upload
     R1 = RunProg(params_list, infile, outfile, './tmp')
     R1.run()
-    for f in os.listdir('./tmp'):
-        if os.path.isfile(str('./tmp' + f)):
-            print("the file:", f)
-            os.remove(f)
+    # for f in os.listdir('./tmp'):
+    #     if os.path.isfile(str('./tmp' + f)):
+    #         print("the file:", f)
+    #         os.remove(f)
+    infile = ""
+    upload = False
     return render_template('running.html', status=R1.execution)
 
 @app.route ('/getStatus', methods=['GET'])
 def getStatus():
-    print("test")
     global R1
     return render_template('running.html', status=R1.execution)
 
 @app.route ('/clearRun', methods=['POST'])
 def clearRun():
     message=R1.reset
-    print("test")
     return render_template("seqgen_home.html", erreur=message)
 
 @app.route('/<path:path>')
