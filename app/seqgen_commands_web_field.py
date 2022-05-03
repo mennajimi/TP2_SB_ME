@@ -18,8 +18,7 @@ import re
 # validations des paramètres selon l'usage de SeqGen
 def val_params(params):
     keys = params.keys()
-    if("m" in keys && )
-
+    print ("here are keys", keys)
 #     found_params = []
 #     if not re.search('-m', str(params)) and '-h' not in params:
 #         return False
