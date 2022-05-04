@@ -7,7 +7,7 @@
 __auteur__ = "Alix Boc"
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort, send_file
-import bd, os
+import bd, os, shutil
 from datetime import datetime
 #from flask_session import Session
 #from validation import Validation
@@ -192,7 +192,7 @@ def fetchParams():
     temp_dict["r3"] = str(request.form["nt_rate3"])
     temp_dict["r4"] = str(request.form["nt_rate4"])
     temp_dict["r5"] = str(request.form["nt_rate5"])
-    temp_dict["r5"] = str(request.form["nt_rate6"])
+    temp_dict["r6"] = str(request.form["nt_rate6"])
     if temp_dict.get("r1") != "" and \
             temp_dict.get("r2") != "" and \
             temp_dict.get("r3") != "" and \
@@ -208,14 +208,24 @@ def fetchParams():
     del temp_dict["r5"]
     del temp_dict["r6"]
 
-    temp_dict["f1"] = str(request.form["nt_rate6"])
-    temp_dict["f2"] = str(request.form["nt_freq1"])
+    temp_dict["f1"] = str(request.form["nt_freq1"])
     temp_dict["f2"] = str(request.form["nt_freq2"])
     temp_dict["f3"] = str(request.form["nt_freq3"])
     temp_dict["f4"] = str(request.form["nt_freq4"])
-    temp_dict["f3"] = str(request.form["nt_freq3"])
+
+    if temp_dict.get("f1") != "" and \
+            temp_dict.get("f2") != "" and \
+            temp_dict.get("f3") != "" and \
+            temp_dict.get("f4") != "":
+
+        merged_f = temp_dict.get("f1") + " " + temp_dict.get("f2") + " " + temp_dict.get("f3") + " " + temp_dict.get("f4")
+        temp_dict["f"] = merged_f
+    del temp_dict["f1"]
+    del temp_dict["f2"]
+    del temp_dict["f3"]
+    del temp_dict["f4"]
     temp_dict["o"] = str(request.form["output"])
-    print (temp_dict)
+    temp_dict["z"] = str(request.form["seed"])
     return temp_dict
 
 def eraseDocs():  #fonction trouvée sur https://stackoverflow.com/questions/185936
@@ -231,8 +241,6 @@ def eraseDocs():  #fonction trouvée sur https://stackoverflow.com/questions/185
                 shutil.rmtree(file_path)
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
-
-
 
 
 if __name__ == '__main__':
