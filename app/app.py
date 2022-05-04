@@ -71,23 +71,9 @@ def returnParams ():
     items = bd.getParams()
     return jsonify(items)
 
-# @app.route ('/params-load', methods=['POST'])
-# def importerParamsFichier ():
-#     file = request.files["file"]
-#     file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire
-#     filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
-#     file_in = open(filename, "r")
-#     for ligne in file_in:
-#         if not ligne.strip():
-#             continue
-#         else:
-#             params_list.append(ligne.strip("\n"))
-#             print("params",params_list)
-#     return default()
-
-
 @app.route ('/submitTree', methods=['POST'])
 def submitTree ():
+    eraseDocs()
     global infile
     global upload
     if request.form["optionTree"] == "pasted": #écrire un fichier à partir du champ
@@ -117,53 +103,22 @@ def submitTree ():
 
 @app.route ('/paramsField', methods=['POST']) # Fini pour les paramètres de base :)
 def paramsField():
-    temp_list = {}
-    temp_list["m"] = str(request.form["model"])
-    temp_list["l"] = str(request.form["length"])
-    temp_list["n"] = str(request.form["datasets"])
-    #params_list["ds"] = str(request.form["i_range"]) ça marche pantoute ici
-    temp_list["k"] = str(request.form["k_ancestral"])
-    temp_list["a"] = str(request.form["shape"])
-    #temp_list["g"] = str(request.form["g_range"])
-    temp_list["c1"] = str(request.form["codon_het2"])
-    temp_list["c2"] = str(request.form["codon_het2"])
-    temp_list["c3"] = str(request.form["codon_het2"])
-    temp_list["r1"] = str(request.form["nt_rate1"])
-    temp_list["r2"] = str(request.form["nt_rate2"])
-    temp_list["r3"] = str(request.form["nt_rate3"])
-    temp_list["r4"] = str(request.form["nt_rate4"])
-    temp_list["r5"] = str(request.form["nt_rate5"])
-    temp_list["f1"] = str(request.form["nt_rate6"])
-    temp_list["f2"] = str(request.form["nt_freq1"])
-    temp_list["f2"] = str(request.form["nt_freq2"])
-    temp_list["f3"] = str(request.form["nt_freq3"])
-    temp_list["f4"] = str(request.form["nt_freq4"])  ###ici les paramètres acides aminés devraient commencer
-    temp_list["f3"] = str(request.form["nt_freq3"])
-    temp_list["o"] = str(request.form["output"])
-    #temp_list["outputFile"] = str(request.form["outputFile"])      ## on utilise pas ce champs pour l'instant
-
-    global params_dict
-    for k, v in temp_list.items():
+    temp_dict = fetchParams()
+    global params_dict, infile
+    for k, v in temp_dict.items():
         if v != "":
             params_dict[k] = v
-    # global infile
-    # if request.form["optionTree"] == "pasted":
-    #     infile = request.form["treeEntry"]
-    # else:
-    #     file = request.form["userfile"]
-    #     infile = app.config['tmp'] + "/" + file  # faire un chemin
-    #     print(infile)
-
     params_list = []
     for cle, valeur in params_dict.items():
        params_list.append("-" + cle + valeur)
+    print(params_list)
     valide = validerParametres(params_list)
-    print (valide)
-    print (params_list)
     if valide:
         return render_template("seqgen_home.html", success="Les paramètres sont valides, procédez", isValid=True)
     else:
-        return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation")
+        eraseDocs()
+        infile = ""
+        return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation", upload = False, isValid=False)
 
     # if params_dict["l"].isdigit() == False or params_dict["m"] == "" or infile == "":
     #     return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation")
@@ -178,20 +133,10 @@ def validerParametres(params_list):
 
 @app.route ('/runprog',methods=['POST'])
 def runprog():
-    outfile = './tmp/'+datetime.now().strftime("%H%M%S") + '_output_seqgen.txt'
-    folder = './tmp'
     global R1, infile, upload
+    outfile = './tmp/'+datetime.now().strftime("%H%M%S") + '_output_seqgen.txt'
     R1 = RunProg(params_dict, infile, outfile, './tmp')
     R1.run()
-    # for filename in os.listdir(folder):
-    #     file_path = os.path.join(folder, filename)
-    #     try:
-    #         if ((os.path.isfile(file_path) or os.path.islink(file_path))) and re.match("tree", filename):
-    #             os.unlink(file_path)
-    #         elif os.path.isdir(file_path):
-    #             shutil.rmtree(file_path)
-    #     except Exception as e:
-    #         print('Failed to delete %s. Reason: %s' % (file_path, e))
     infile = ""
     upload = False
     return render_template('running.html', status=R1.execution)
@@ -203,8 +148,11 @@ def getStatus():
 
 @app.route ('/clearRun', methods=['POST'])
 def clearRun():
+    global infile
     message=R1.reset
-    return render_template("seqgen_home.html", erreur=message)
+    eraseDocs()
+    infile = ""
+    return render_template("seqgen_home.html", erreur=message, upload = False, isValid=False)
 
 @app.route('/<path:path>')
 def all_files(path):
@@ -212,6 +160,80 @@ def all_files(path):
         return app.send_static_file(path)
     else:
         return default()
+
+def fetchParams():
+    temp_dict = {}
+    temp_dict["m"] = str(request.form["model"])
+    temp_dict["l"] = str(request.form["length"])
+    temp_dict["n"] = str(request.form["datasets"])
+    temp_dict["scaling"] = str(request.form["scaling"])
+
+    if temp_dict.get("scaling") == "s":
+        temp_dict["s"] = str(request.form["text_scaling"])
+    if temp_dict.get("scaling") == "d":
+        temp_dict["d"] = str(request.form["text_scaling"])
+    del temp_dict["scaling"]
+
+    temp_dict["k"] = str(request.form["k_ancestral"])
+    temp_dict["a"] = str(request.form["shape"])
+    temp_dict["g"] = str(request.form["g_range"])
+    temp_dict["c1"] = str(request.form["codon_het2"])
+    temp_dict["c2"] = str(request.form["codon_het2"])
+    temp_dict["c3"] = str(request.form["codon_het2"])
+    if temp_dict.get("c1") != "" and temp_dict.get("c2") != "" and temp_dict.get("c3") != "":
+        merged_c = temp_dict.get("c1")+" "+temp_dict.get("c2")+" "+temp_dict.get("c3")
+        temp_dict["c"] = merged_c
+    del temp_dict["c1"]
+    del temp_dict["c2"]
+    del temp_dict["c3"]
+
+    temp_dict["r1"] = str(request.form["nt_rate1"])
+    temp_dict["r2"] = str(request.form["nt_rate2"])
+    temp_dict["r3"] = str(request.form["nt_rate3"])
+    temp_dict["r4"] = str(request.form["nt_rate4"])
+    temp_dict["r5"] = str(request.form["nt_rate5"])
+    temp_dict["r5"] = str(request.form["nt_rate6"])
+    if temp_dict.get("r1") != "" and \
+            temp_dict.get("r2") != "" and \
+            temp_dict.get("r3") != "" and \
+            temp_dict.get("r4") != "" and \
+            temp_dict.get("r5") != "" and \
+            temp_dict.get("r6") != "":
+        merged_r = temp_dict.get("r1") + " " + temp_dict.get("r2") + " " + temp_dict.get("r3") + " " + temp_dict.get("r4") + " " + temp_dict.get("r5") + " " + temp_dict.get("r6")
+        temp_dict["r"] = merged_r
+    del temp_dict["r1"]
+    del temp_dict["r2"]
+    del temp_dict["r3"]
+    del temp_dict["r4"]
+    del temp_dict["r5"]
+    del temp_dict["r6"]
+
+    temp_dict["f1"] = str(request.form["nt_rate6"])
+    temp_dict["f2"] = str(request.form["nt_freq1"])
+    temp_dict["f2"] = str(request.form["nt_freq2"])
+    temp_dict["f3"] = str(request.form["nt_freq3"])
+    temp_dict["f4"] = str(request.form["nt_freq4"])
+    temp_dict["f3"] = str(request.form["nt_freq3"])
+    temp_dict["o"] = str(request.form["output"])
+    print (temp_dict)
+    return temp_dict
+
+def eraseDocs():  #fonction trouvée sur https://stackoverflow.com/questions/185936
+    global params_dict, infile
+    params_dict = {}
+    folder = './tmp'
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if ((os.path.isfile(file_path) or os.path.islink(file_path))): # and re.match("tree", filename):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, port=4999)

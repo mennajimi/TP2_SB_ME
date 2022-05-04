@@ -87,20 +87,20 @@
                 </td>
             <tr>
                 <td>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Choose:</button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#" aria-selected="true">Default</a>
-                                    <a class="dropdown-item" href="#">-d</a>
-                                    <a class="dropdown-item" href="#">-s</a>
+                    <div class="form-group">
+                    Scaling:
+                    <select class="form-select" id="scaling" name ="scaling" style="width=50%">
+                        <option selected></option>
+                                <option value="none">none</option>
+                                <option value="d">-d</option>
+                                <option value="s">-s</option>
                         </div>
-                                <input type="text" class="form-control" aria-label="Text input with dropdown button" placeholder="decimal #">
-                    </div>
+                    <div class="form-group">
+                        <input class="form-control-sm" type=”text” name="text_scaling" id="text_scaling" placeholder="decimal" style="width: 70px;">                    </div>
                 </td>
                 <td>
                     <div class="form-group">
-                        <span class="input-group-addon"> -k:</span>  <input class="form-control-sm" type=”text” name="k_ancestral" id="k_ancestral" placeholder="integer >0" width="50%">
+                        <span class="input-group-addon"> -k:</span>  <input class="form-control-sm" type=”text” name="k_ancestral" id="k_ancestral" placeholder="integer >0" >
                     </div>
                 </td>
             </tr>
@@ -219,7 +219,6 @@
 </form>
 {% endif %}
 
-<!--    Le bouton est pas beau et il retourne à la page précédente (history.back(-1))= retourne à la homepage-->
 
 
 
@@ -228,6 +227,8 @@
 
 
 <br><br>
+
+<!-- Function inputTypeChanged from trex.uqam.ca   -->
 
 <script>
 		function inputTypeChanged(val){
