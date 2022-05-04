@@ -100,8 +100,8 @@ def submitTree ():
     elif request.form["optionTree"] == "file": #sauver le fichier dans tmp
         infile = []
         file = request.files["userfile"]
-        file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire tmp
-        filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
+        file.save(os.path.join(app.config['tmp'], "tree_"+file.filename))  # sauver le fichier dans le répertoire tmp
+        filename = app.config['tmp'] + "/" + "tree_"+file.filename  # faire un chemin
         file_in = open(filename, "r")
         for ligne in file_in:
             if not ligne.strip():
@@ -179,13 +179,19 @@ def validerParametres(params_list):
 @app.route ('/runprog',methods=['POST'])
 def runprog():
     outfile = './tmp/'+datetime.now().strftime("%H%M%S") + '_output_seqgen.txt'
+    folder = './tmp'
     global R1, infile, upload
     R1 = RunProg(params_dict, infile, outfile, './tmp')
     R1.run()
-    # for f in os.listdir('./tmp'):
-    #     if os.path.isfile(str('./tmp' + f)):
-    #         print("the file:", f)
-    #         os.remove(f)
+    # for filename in os.listdir(folder):
+    #     file_path = os.path.join(folder, filename)
+    #     try:
+    #         if ((os.path.isfile(file_path) or os.path.islink(file_path))) and re.match("tree", filename):
+    #             os.unlink(file_path)
+    #         elif os.path.isdir(file_path):
+    #             shutil.rmtree(file_path)
+    #     except Exception as e:
+    #         print('Failed to delete %s. Reason: %s' % (file_path, e))
     infile = ""
     upload = False
     return render_template('running.html', status=R1.execution)
