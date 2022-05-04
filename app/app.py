@@ -6,14 +6,13 @@
 #=============================
 __auteur__ = "Alix Boc"
 
-import urllib.request, json
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort, send_file
 import bd, os
 from datetime import datetime
 #from flask_session import Session
 #from validation import Validation
-from validation import Validation
-# import seqgen_commands_web_field
+from validation_Field import Validation
+import seqgen_commands_web_field
 from RunProg import RunProg
 import re
 
@@ -31,7 +30,7 @@ bd.init_db()  #pas d'utilisation de la bd pour l'instant
 
 
 model_options = ["HKY","F84","GTR","JTT","WAG","PAM","BLOSUM","MTREV","CPREV45","MTART","LG","GENERAL"]
-params_list = {}
+params_dict = {}
 infile = ""
 R1 = ""
 upload=False
@@ -104,7 +103,6 @@ def submitTree ():
         file.save(os.path.join(app.config['tmp'], file.filename))  # sauver le fichier dans le répertoire tmp
         filename = app.config['tmp'] + "/" + file.filename  # faire un chemin
         file_in = open(filename, "r")
-        print("file", file, "filename", filename)
         for ligne in file_in:
             if not ligne.strip():
                 continue
@@ -126,7 +124,7 @@ def paramsField():
     #params_list["ds"] = str(request.form["i_range"]) ça marche pantoute ici
     temp_list["k"] = str(request.form["k_ancestral"])
     temp_list["a"] = str(request.form["shape"])
-    temp_list["g"] = str(request.form["g_range"])
+    #temp_list["g"] = str(request.form["g_range"])
     temp_list["c1"] = str(request.form["codon_het2"])
     temp_list["c2"] = str(request.form["codon_het2"])
     temp_list["c3"] = str(request.form["codon_het2"])
@@ -144,12 +142,10 @@ def paramsField():
     temp_list["o"] = str(request.form["output"])
     #temp_list["outputFile"] = str(request.form["outputFile"])      ## on utilise pas ce champs pour l'instant
 
-    global params_list
+    global params_dict
     for k, v in temp_list.items():
         if v != "":
-            print(v)
-            print(k)
-            params_list[k] = v
+            params_dict[k] = v
     # global infile
     # if request.form["optionTree"] == "pasted":
     #     infile = request.form["treeEntry"]
@@ -157,29 +153,34 @@ def paramsField():
     #     file = request.form["userfile"]
     #     infile = app.config['tmp'] + "/" + file  # faire un chemin
     #     print(infile)
-    if params_list["l"].isdigit() == False or params_list["m"] == "" or infile == "":
-        print("Params non valide")
-        return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation")
-    else:
+
+    params_list = []
+    for cle, valeur in params_dict.items():
+       params_list.append("-" + cle + valeur)
+    valide = validerParametres(params_list)
+    print (valide)
+    print (params_list)
+    if valide:
         return render_template("seqgen_home.html", success="Les paramètres sont valides, procédez", isValid=True)
+    else:
+        return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation")
+
+    # if params_dict["l"].isdigit() == False or params_dict["m"] == "" or infile == "":
+    #     return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation")
+    # else:
+    #     return render_template("seqgen_home.html", success="Les paramètres sont valides, procédez", isValid=True)
 
 
-# @app.route ('/validerParams',methods=['POST'])
-# def validerParametres():
-#     V1 = Validation(params_list, './tmp')
-#     valide = V1.valide
-#     print(valide)
-#     if valide == False:
-#         print("Params non valide")
-#         return render_template('seqgen_home.html', erreur="Paramètres non valide, revoyez l'utilisation")
-#     else:
-#         return default()
+def validerParametres(params_list):
+    V1 = Validation(params_list)
+    print(V1.valide)
+    return V1.valide
 
 @app.route ('/runprog',methods=['POST'])
 def runprog():
     outfile = './tmp/'+datetime.now().strftime("%H%M%S") + '_output_seqgen.txt'
     global R1, infile, upload
-    R1 = RunProg(params_list, infile, outfile, './tmp')
+    R1 = RunProg(params_dict, infile, outfile, './tmp')
     R1.run()
     # for f in os.listdir('./tmp'):
     #     if os.path.isfile(str('./tmp' + f)):

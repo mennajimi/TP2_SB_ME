@@ -63,16 +63,16 @@ class RunProg:
             self.__execution = "Execution: failed, see log file"
         return self.__execution
 
-    def __status(self):   #utilisé pour vérifier le status d'exécution du process seqgen
-        if self.__process == "":
-            self.__execution = "Execution: not launched"
-        elif self.__process == "help" or self.__process.poll() == 0:
-            self.__execution = "Execution: successfully completed"
-        elif self.__process.poll() is None:
-            self.__execution = "Execution: running"
-        else:
-            self.__execution = "Execution: failed, see log file"
-        return self.__execution
+    # def __status(self):   #utilisé pour vérifier le status d'exécution du process seqgen
+    #     if self.__process == "":
+    #         self.__execution = "Execution: not launched"
+    #     elif self.__process == "help" or self.__process.poll() == 0:
+    #         self.__execution = "Execution: successfully completed"
+    #     elif self.__process.poll() is None:
+    #         self.__execution = "Execution: running"
+    #     else:
+    #         self.__execution = "Execution: failed, see log file"
+    #     return self.__execution
 
     @property
     def reset(self):   #permet d'effacer les documents et d'annuler la requête (kill)
@@ -92,48 +92,48 @@ class RunProg:
         else:
             return "Program not launched"
 
-    def view(self):   #permet de voir les fichiers dans le dossier de travail seqgen
-        my_files = []
-        if os.path.exists(self.__directory):
-            for f in os.listdir(self.__directory):
-                if os.path.isfile(str(self.__directory) + "/" + f):
-                    my_files.append(f)
-            if len(my_files) != 0:
-                print("\nFichier(s) dans" + " " + str(self.__directory) + ":")
-                for f in my_files:
-                    print(f)
-            else:
-                print("Aucun ficher dans: ", self.__directory)
-        else:
-            print("Il n'y a pas de résultats pour cette requête")
+    # def view(self):   #permet de voir les fichiers dans le dossier de travail seqgen
+    #     my_files = []
+    #     if os.path.exists(self.__directory):
+    #         for f in os.listdir(self.__directory):
+    #             if os.path.isfile(str(self.__directory) + "/" + f):
+    #                 my_files.append(f)
+    #         if len(my_files) != 0:
+    #             print("\nFichier(s) dans" + " " + str(self.__directory) + ":")
+    #             for f in my_files:
+    #                 print(f)
+    #         else:
+    #             print("Aucun ficher dans: ", self.__directory)
+    #     else:
+    #         print("Il n'y a pas de résultats pour cette requête")
 
-    def read(self, file=None):  #permet de lire le contenu du document du process seqgen
-        if os.path.exists(str(self.__directory) + "/" + str(file)):
-            print("\nVoici le contenu de:" + str(self.__directory) + "/" + str(file) + ":")
-            file_in = open(str(self.__directory) + "/" + str(file), "r")
-            for ligne in file_in:
-                print(ligne)
-            file_in.close()
-        elif os.path.exists(str(self.__directory) + "/" + str(self.__outfile)):
-            print("\nFichier non-spécifié ou n'existe pas, voici le contenu de exécution SeqGen en cours:"
-                  + str(self.__directory) + "/" + str(self.__outfile) + ":")
-            file_in = open(str(self.__directory) + "/" + str(self.__outfile), "r")
-            for ligne in file_in:
-                print(ligne)
-            file_in.close()
-        else:
-            print("Aucun fichier",str(file),"dans votre dossier")
+    # def read(self, file=None):  #permet de lire le contenu du document du process seqgen
+    #     if os.path.exists(str(self.__directory) + "/" + str(file)):
+    #         print("\nVoici le contenu de:" + str(self.__directory) + "/" + str(file) + ":")
+    #         file_in = open(str(self.__directory) + "/" + str(file), "r")
+    #         for ligne in file_in:
+    #             print(ligne)
+    #         file_in.close()
+    #     elif os.path.exists(str(self.__directory) + "/" + str(self.__outfile)):
+    #         print("\nFichier non-spécifié ou n'existe pas, voici le contenu de exécution SeqGen en cours:"
+    #               + str(self.__directory) + "/" + str(self.__outfile) + ":")
+    #         file_in = open(str(self.__directory) + "/" + str(self.__outfile), "r")
+    #         for ligne in file_in:
+    #             print(ligne)
+    #         file_in.close()
+    #     else:
+    #         print("Aucun fichier",str(file),"dans votre dossier")
 
-
-    """
-ci-bas, ensemble de méthode privée de la classe qui permettent la gestion des informations internes de la classe
-    """
-
-    def __new_dir(self): # afin de créer un dossier de travail
-        directory = './seqgen_SB'
-        if not os.path.exists(directory):
-            os.mkdir(directory)
-        return (directory)
+#
+#     """
+# ci-bas, ensemble de méthode privée de la classe qui permettent la gestion des informations internes de la classe
+#     """
+#
+#     def __new_dir(self): # afin de créer un dossier de travail
+#         directory = './seqgen_SB'
+#         if not os.path.exists(directory):
+#             os.mkdir(directory)
+#         return (directory)
 
 
     # variable de classe __now qui permet de créer des fichiers avec identifiant unique
