@@ -1,0 +1,23 @@
+Sequence Generator - seq-gen
+Version 1.3.4
+(c) Copyright, 1996-2017 Andrew Rambaut and Nick Grassly
+Institute of Evolutionary Biology, University of Edinburgh
+
+Originally developed at:
+Department of Zoology, University of Oxford
+
+Random number generator seed: 5220359559911763342
+
+Simulations of 4 taxa, 10 nucleotides
+  for 1 tree(s) with 10 dataset(s) per tree
+
+Branch lengths assumed to be number of substitutions per site
+
+Rate homogeneity of sites.
+Model = HKY: Hasegawa, Kishino & Yano (1985)
+  Rate of transitions and transversions equal:
+  transition/transversion ratio = 0.5 (K=1)
+  with nucleotide frequencies equal.
+0%|__________|100%
+  [..........]
+Time taken: 0.00095 seconds

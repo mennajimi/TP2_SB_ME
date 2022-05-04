@@ -214,7 +214,12 @@
     <button type="submit" class="btn btn-primary my-1"name="run" id ="run">Execute Seq-gen</button>
 </form>
 {% else %}
+    <form>
+ <input type="button" value="Retour à la page précédente!" onclick="history.back()">
+</form>
 {% endif %}
+
+<!--    Le bouton est pas beau et il retourne à la page précédente (history.back(-1))= retourne à la homepage-->
 
 
 
