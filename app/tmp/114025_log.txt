@@ -6,10 +6,10 @@ Institute of Evolutionary Biology, University of Edinburgh
 Originally developed at:
 Department of Zoology, University of Oxford
 
-Random number generator seed: -855639853546644970
+Random number generator seed: -6172699732577372555
 
 Simulations of 4 taxa, 10 nucleotides
-  for 1 tree(s) with 1010 dataset(s) per tree
+  for 1 tree(s) with 1 dataset(s) per tree
 
 Branch lengths assumed to be number of substitutions per site
 
@@ -21,6 +21,4 @@ Model = HKY: Hasegawa, Kishino & Yano (1985)
   Rate of transitions and transversions equal:
   transition/transversion ratio = 0.5 (K=1)
   with nucleotide frequencies equal.
-0%|_____________________|100%
-  [.....................]
-Time taken: 0.00877 seconds
+Time taken: 0.000818 seconds

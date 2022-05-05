@@ -1,0 +1,5 @@
+ 4 10
+Taxon1    ACATAGGGGG
+Taxon2    AAATATGGGG
+Taxon3    ACATTCGTGC
+Taxon4    AAACCCGTGG

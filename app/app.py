@@ -120,6 +120,13 @@ def getStatus():
     global R1
     return render_template('running.html', status=R1.execution)
 
+
+@app.route ('/getStatusajax', methods=['GET'])  #obtenir le statut du programme par la classe RunProg
+def getStatusAJAX():
+    global R1
+    return jsonify({
+        'data': R1.execution
+    })
 @app.route ('/clearRun', methods=['POST'])  #effacer les données pour recommencer
 def clearRun():
     global infile
