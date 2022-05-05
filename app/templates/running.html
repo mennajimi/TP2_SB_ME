@@ -2,17 +2,43 @@
 
 {% block content %}
 	<BODY>
-    <h4> Seq-gen was launched!</h4>
+    <style>
+h.attr-marker:not(:empty) {
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    line-height: 12px;
+    font-size: 9px;
+    text-align: center;
+    background: #000;
+    color: #fff;
+}
+div {text-align: center;}
+.button.block {
+    display: block;
+    width: 100px;
+}
+
+.margin-auto {
+    margin: 0 auto;
+}
+</style>
+    <h3> Seq-gen was launched!</h3>
                 {% if status %}
+    <br>
                 <div class="col-md-5">
 <!--                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm">Get status</button>-->
-
+<div class="d-grid gap-2 col-6 mx-auto">
 <button type="submit" class="btn btn-primary my-1"name="state" id ="state"  data-toggle="modal" data-target=".bd-example-modal-sm">Get program status</button>
+</div>
 <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"  aria-hidden="true">
   <div class="modal-dialog modal-sm">
       <header style="background-color:#fff;color:#000;">
   <span class="close-btn">&times;</span>
+          <form name='status' action='/getStatus' method='GET'>
     <div class="modal-content" role="alert">{{status}}</div>    <!-- message de statut -->
+              </form>
 </header>
   </div>
 </div>
