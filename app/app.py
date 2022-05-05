@@ -56,10 +56,6 @@ def help():
 def usage():
     return render_template('usage.html')
 
-@app.route ('/returnParams', methods=['POST'])
-def returnParams ():
-    items = bd.getParams()
-    return jsonify(items)
 
 @app.route ('/submitTree', methods=['POST']) #prend l'arbre soumis et le sauvegarde dans un fichier
 def submitTree ():
@@ -109,11 +105,6 @@ def paramsField():
         return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation", upload = False, isValid=False)
 
 
-def validerParametres(params_list):  #valider les paramètres par la classe Validation
-    V1 = Validation(params_list)
-    print(V1.valide)
-    return V1.valide
-
 @app.route ('/runprog',methods=['POST'])  #lancer l'exécution de seq-gen par la classe RunProg
 def runprog():
     global R1, infile, upload
@@ -144,6 +135,25 @@ def all_files(path):
         return app.send_static_file(path)
     else:
         return default()
+
+def validerParametres(params_list):  #valider les paramètres par la classe Validation
+    V1 = Validation(params_list)
+    print(V1.valide)
+    return V1.valide
+
+def eraseDocs():  # efface les documents dans tmp. fonction trouvée sur https://stackoverflow.com/questions/185936
+    global params_dict, infile
+    params_dict = {}
+    folder = './tmp'
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if ((os.path.isfile(file_path) or os.path.islink(file_path))): # and re.match("tree", filename):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 def fetchParams():  ###va chercher les paramètres dans le doc et
     temp_dict = {}
@@ -216,20 +226,6 @@ def fetchParams():  ###va chercher les paramètres dans le doc et
     temp_dict["o"] = str(request.form["output"])
     temp_dict["z"] = str(request.form["seed"])
     return temp_dict
-
-def eraseDocs():  # efface les documents dans tmp. fonction trouvée sur https://stackoverflow.com/questions/185936
-    global params_dict, infile
-    params_dict = {}
-    folder = './tmp'
-    for filename in os.listdir(folder):
-        file_path = os.path.join(folder, filename)
-        try:
-            if ((os.path.isfile(file_path) or os.path.islink(file_path))): # and re.match("tree", filename):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
 if __name__ == '__main__':
