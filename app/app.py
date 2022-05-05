@@ -12,7 +12,7 @@
 """
 
 from flask import Flask, render_template, request, jsonify, abort, send_file
-import bd, os, shutil
+import os, shutil
 from datetime import datetime
 from validation_Field import Validation
 from RunProg import RunProg

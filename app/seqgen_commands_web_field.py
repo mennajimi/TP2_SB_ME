@@ -1,8 +1,8 @@
 """
 
     validation script for SeqGen Runner
-    version 1.0
-    Auteur : Salix Boulet
+    version 2.0
+    Auteur : Salix Boulet et Myriam Ennajimi
     Date   : Hiver 2022
 
     Ce script accompagne le programme SeqGen Runner version 1.0
