@@ -5,19 +5,30 @@
     <h4> Seq-gen was launched!</h4>
                 {% if status %}
                 <div class="col-md-5">
-                    <div class="alert alert-success" role="alert">{{status}}</div>
-                </div>
+<!--                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm">Get status</button>-->
+
+<button type="submit" class="btn btn-primary my-1"name="state" id ="state"  data-toggle="modal" data-target=".bd-example-modal-sm">Get program status</button>
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"  aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+      <header style="background-color:#fff;color:#000;">
+  <span class="close-btn">&times;</span>
+    <div class="modal-content" role="alert">{{status}}</div>    <!-- message de statut -->
+</header>
+  </div>
+</div>
+
+
                 {% endif %}
+
     <br>
-    <br>
-    <form name='status' action='/getStatus' method='GET'>
-        <button type="submit" class="btn btn-primary my-1"name="state" id ="state">Get program status</button>
+<div class="btn-group" role="group" aria-label="Basic example">
+<!--    <form name='status' action='/getStatus' method='GET'>-->
+<!--        <button type="submit" class="btn btn-primary my-1"name="state" id ="state">Get program status</button>-->
+<!--    </form>-->
+     <form name='clear' action='/clearRun' method='POST'>
+        <button type="submit" class="btn btn-danger my-1"name="kill" id ="kill">Clear Run</button>
     </form>
-    <br>
-    <br>
-        <form name='clear' action='/clearRun' method='POST'>
-        <button type="submit" class="btn btn-danger"name="kill" id ="kill">Clear Run</button>
-    </form>
+</div>
     <br>
     <br>
     <h4> Get results <a href="/results">here</a></h4>

@@ -133,6 +133,7 @@ def getStatus():
 def clearRun():
     global infile
     message=R1.reset
+
     eraseDocs()
     infile = ""
     return render_template("seqgen_home.html", erreur=message, upload = False, isValid=False)

@@ -1,0 +1,26 @@
+Sequence Generator - seq-gen
+Version 1.3.4
+(c) Copyright, 1996-2017 Andrew Rambaut and Nick Grassly
+Institute of Evolutionary Biology, University of Edinburgh
+
+Originally developed at:
+Department of Zoology, University of Oxford
+
+Random number generator seed: 2078359095362172162
+
+Simulations of 4 taxa, 10 nucleotides
+  for 1 tree(s) with 10 dataset(s) per tree
+
+Branch lengths assumed to be number of substitutions per site
+
+Discrete gamma rate heterogeneity:
+    shape = 1.000000, 2 categories
+Invariable sites model:
+    proportion invariable = 0.000000
+Model = F84: Felsenstein (1984)
+  Rate of transitions and transversions equal:
+  transition/transversion ratio = 0.5 (kappa=0)
+  with nucleotide frequencies equal.
+0%|__________|100%
+  [..........]
+Time taken: 0.000762 seconds

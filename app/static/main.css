@@ -97,3 +97,8 @@ display:inline-block;
 /* additional code */
 }
 
+.close-btn {
+  font-size: 20px;
+  font-weight: normal;
+  color: #000;
+}
