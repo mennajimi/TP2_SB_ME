@@ -1,35 +1,30 @@
 #!/usr/bin/python
+"""
 
-#=============================
-#== Serveur Flask
-#== Validation
-#=============================
-__auteur__ = "Alix Boc"
+    App
+    version 2.0
+    Auteur : Salix Boulet et Myriam Ennajimi
+    Date   : Hiver 2022
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, abort, send_file
+    Serveur Flask pour Seq-gen
+
+
+"""
+
+from flask import Flask, render_template, request, jsonify, abort, send_file
 import bd, os, shutil
 from datetime import datetime
-#from flask_session import Session
-#from validation import Validation
 from validation_Field import Validation
-import seqgen_commands_web_field
 from RunProg import RunProg
-import re
 
 # Setup Flask app.
 app = Flask(__name__)
 app.debug = True
-app.config['SECRET_KEY'] = '25eb4d5558b3a957'
 if not os.path.exists("./tmp"):
     os.mkdir("./tmp")
 app.config['tmp'] = './tmp'
-#app.config["SESSION_PERMANENT"] = False  ## si jamais besoin de login et user
-#app.config["SESSION_TYPE"] = "filesystem"
-#Session(app)
-bd.init_db()  #pas d'utilisation de la bd pour l'instant
 
 
-model_options = ["HKY","F84","GTR","JTT","WAG","PAM","BLOSUM","MTREV","CPREV45","MTART","LG","GENERAL"]
 params_dict = {}
 infile = ""
 R1 = ""
@@ -38,22 +33,17 @@ upload=False
 @app.route('/')
 def default():
     return render_template('seqgen_home.html', upload=upload)
-#a chaque fois que tu fais un render tempplate pour seqgen-home, on renvoit status
 
-@app.route('/results', defaults={'req_path': ''})
+
+@app.route('/results', defaults={'req_path': ''})  ##from https://stackoverflow.com/questions/23718236/python-flask-browsing-through-directory-with-files
 @app.route('/<path:req_path>')
 def results(req_path):
     BASE_DIR = './tmp'
-
-    # Joining the base and the requested path
     abs_path = os.path.join(BASE_DIR, req_path)
-    # Return 404 if path doesn't exist
     if not os.path.exists(abs_path):
         return abort(404)
-     # Check if path is a file and serve
     if os.path.isfile(abs_path):
         return send_file(abs_path)
-     # Show directory contents
     files = os.listdir(abs_path)
     return render_template('results.html', files=files)
 
@@ -71,19 +61,18 @@ def returnParams ():
     items = bd.getParams()
     return jsonify(items)
 
-@app.route ('/submitTree', methods=['POST'])
+@app.route ('/submitTree', methods=['POST']) #prend l'arbre soumis et le sauvegarde dans un fichier
 def submitTree ():
     eraseDocs()
-    global infile
-    global upload
+    global infile, upload
     if request.form["optionTree"] == "pasted": #écrire un fichier à partir du champ
-        tree =request.form["treeEntry"]
-        infile ="tmp/entry.tree"
-        file_in=open("tmp/entry.tree", "w")
+        tree = request.form["treeEntry"]
+        infile = "tmp/entry.tree"
+        file_in = open("tmp/entry.tree", "w")
         for lines in tree:
             file_in.write(lines)
         file_in.close()
-    elif request.form["optionTree"] == "file": #sauver le fichier dans tmp
+    elif request.form["optionTree"] == "file": #sauver le fichier soumis par l'utilisateur dans tmp
         infile = []
         file = request.files["userfile"]
         file.save(os.path.join(app.config['tmp'], "tree_"+file.filename))  # sauver le fichier dans le répertoire tmp
@@ -101,7 +90,7 @@ def submitTree ():
     return render_template('seqgen_home.html', upload = upload)
 
 
-@app.route ('/paramsField', methods=['POST']) # Fini pour les paramètres de base :)
+@app.route ('/paramsField', methods=['POST']) #importer et valider les paramètres
 def paramsField():
     temp_dict = fetchParams()
     global params_dict, infile
@@ -117,21 +106,15 @@ def paramsField():
         return render_template("seqgen_home.html", success="Les paramètres sont valides, procédez", isValid=True)
     else:
         eraseDocs()
-        infile = ""
         return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation", upload = False, isValid=False)
 
-    # if params_dict["l"].isdigit() == False or params_dict["m"] == "" or infile == "":
-    #     return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation")
-    # else:
-    #     return render_template("seqgen_home.html", success="Les paramètres sont valides, procédez", isValid=True)
 
-
-def validerParametres(params_list):
+def validerParametres(params_list):  #valider les paramètres par la classe Validation
     V1 = Validation(params_list)
     print(V1.valide)
     return V1.valide
 
-@app.route ('/runprog',methods=['POST'])
+@app.route ('/runprog',methods=['POST'])  #lancer l'exécution de seq-gen par la classe RunProg
 def runprog():
     global R1, infile, upload
     outfile = './tmp/'+datetime.now().strftime("%H%M%S") + '_output_seqgen.txt'
@@ -141,12 +124,12 @@ def runprog():
     upload = False
     return render_template('running.html', status=R1.execution)
 
-@app.route ('/getStatus', methods=['GET'])
+@app.route ('/getStatus', methods=['GET'])  #obtenir le statut du programme par la classe RunProg
 def getStatus():
     global R1
     return render_template('running.html', status=R1.execution)
 
-@app.route ('/clearRun', methods=['POST'])
+@app.route ('/clearRun', methods=['POST'])  #effacer les données pour recommencer
 def clearRun():
     global infile
     message=R1.reset
@@ -161,13 +144,15 @@ def all_files(path):
     else:
         return default()
 
-def fetchParams():
+def fetchParams():  ###va chercher les paramètres dans le doc et
     temp_dict = {}
     temp_dict["m"] = str(request.form["model"])
     temp_dict["l"] = str(request.form["length"])
     temp_dict["n"] = str(request.form["datasets"])
-    temp_dict["scaling"] = str(request.form["scaling"])
+    temp_dict["p"] = str(request.form["partitions"])
+    temp_dict["i"] = str(request.form["i_range"])
 
+    temp_dict["scaling"] = str(request.form["scaling"])
     if temp_dict.get("scaling") == "s":
         temp_dict["s"] = str(request.form["text_scaling"])
     if temp_dict.get("scaling") == "d":
@@ -177,15 +162,16 @@ def fetchParams():
     temp_dict["k"] = str(request.form["k_ancestral"])
     temp_dict["a"] = str(request.form["shape"])
     temp_dict["g"] = str(request.form["g_range"])
+
     temp_dict["c1"] = str(request.form["codon_het2"])
     temp_dict["c2"] = str(request.form["codon_het2"])
     temp_dict["c3"] = str(request.form["codon_het2"])
     if temp_dict.get("c1") != "" and temp_dict.get("c2") != "" and temp_dict.get("c3") != "":
         merged_c = temp_dict.get("c1")+" "+temp_dict.get("c2")+" "+temp_dict.get("c3")
         temp_dict["c"] = merged_c
-    del temp_dict["c1"]
-    del temp_dict["c2"]
-    del temp_dict["c3"]
+        del temp_dict["c1"]
+        del temp_dict["c2"]
+        del temp_dict["c3"]
 
     temp_dict["r1"] = str(request.form["nt_rate1"])
     temp_dict["r2"] = str(request.form["nt_rate2"])
@@ -201,12 +187,12 @@ def fetchParams():
             temp_dict.get("r6") != "":
         merged_r = temp_dict.get("r1") + " " + temp_dict.get("r2") + " " + temp_dict.get("r3") + " " + temp_dict.get("r4") + " " + temp_dict.get("r5") + " " + temp_dict.get("r6")
         temp_dict["r"] = merged_r
-    del temp_dict["r1"]
-    del temp_dict["r2"]
-    del temp_dict["r3"]
-    del temp_dict["r4"]
-    del temp_dict["r5"]
-    del temp_dict["r6"]
+        del temp_dict["r1"]
+        del temp_dict["r2"]
+        del temp_dict["r3"]
+        del temp_dict["r4"]
+        del temp_dict["r5"]
+        del temp_dict["r6"]
 
     temp_dict["f1"] = str(request.form["nt_freq1"])
     temp_dict["f2"] = str(request.form["nt_freq2"])
@@ -220,15 +206,17 @@ def fetchParams():
 
         merged_f = temp_dict.get("f1") + " " + temp_dict.get("f2") + " " + temp_dict.get("f3") + " " + temp_dict.get("f4")
         temp_dict["f"] = merged_f
-    del temp_dict["f1"]
-    del temp_dict["f2"]
-    del temp_dict["f3"]
-    del temp_dict["f4"]
+        del temp_dict["f1"]
+        del temp_dict["f2"]
+        del temp_dict["f3"]
+        del temp_dict["f4"]
+
+    temp_dict["t"] = str(request.form["transition"])
     temp_dict["o"] = str(request.form["output"])
     temp_dict["z"] = str(request.form["seed"])
     return temp_dict
 
-def eraseDocs():  #fonction trouvée sur https://stackoverflow.com/questions/185936
+def eraseDocs():  # efface les documents dans tmp. fonction trouvée sur https://stackoverflow.com/questions/185936
     global params_dict, infile
     params_dict = {}
     folder = './tmp'
