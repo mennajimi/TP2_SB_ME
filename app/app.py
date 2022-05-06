@@ -24,7 +24,7 @@ if not os.path.exists("./tmp"):
     os.mkdir("./tmp")
 app.config['tmp'] = './tmp'
 
-
+#declare global variables
 params_dict = {}
 infile = ""
 R1 = ""
@@ -99,10 +99,10 @@ def paramsField():
     print(params_list)
     valide = validerParametres(params_list)
     if valide:
-        return render_template("seqgen_home.html", success="Les paramètres sont valides, procédez", isValid=True)
+        return render_template("seqgen_home.html", success="Selected parameters are valid", isValid=True)
     else:
         eraseDocs()
-        return render_template('seqgen_home.html', erreur="Paramètres non valides, revoyez l'utilisation", upload = False, isValid=False)
+        return render_template('seqgen_home.html', erreur="Parameters not valid, please see usage", upload = False, isValid=False)
 
 
 @app.route ('/runprog',methods=['POST'])  #lancer l'exécution de seq-gen par la classe RunProg
