@@ -29,7 +29,6 @@ div {text-align: center;}
                 {% if status %}
     <br>
                 <div class="col-md-5">
-<!--                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-sm">Get status</button>-->
 <div class="d-grid gap-2 col-6 mx-auto">
 <button type="submit" class="btn btn-primary my-1"name="state" id ="state"  data-toggle="modal" data-target=".bd-example-modal-sm">Get program status</button>
 </div>
@@ -49,9 +48,6 @@ div {text-align: center;}
 
     <br>
 <div class="btn-group" role="group" aria-label="Basic example">
-<!--    <form name='status' action='/getStatus' method='GET'>-->
-<!--        <button type="submit" class="btn btn-primary my-1"name="state" id ="state">Get program status</button>-->
-<!--    </form>-->
      <form name='clear' action='/clearRun' method='POST'>
         <button type="submit" class="btn btn-danger my-1"name="kill" id ="kill">Clear Run</button>
     </form>
